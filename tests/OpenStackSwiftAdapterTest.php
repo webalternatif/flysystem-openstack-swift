@@ -182,4 +182,23 @@ class OpenStackSwiftAdapterTest extends FilesystemAdapterTestCase
     {
         // Directory creation is not supported
     }
+
+    public function test_listing_slash_is_equivalent_to_listing_empty_string(): void
+    {
+        $this->runScenario(function () {
+            $adapter = $this->adapter();
+            $adapter->write('file.txt', 'string', new Config());
+            $adapter->write('path/file.txt', 'string', new Config());
+
+            $this->assertEquals(
+                iterator_to_array($adapter->listContents('', false)),
+                iterator_to_array($adapter->listContents('/', false))
+            );
+
+            $this->assertEquals(
+                iterator_to_array($adapter->listContents('', true)),
+                iterator_to_array($adapter->listContents('/', true))
+            );
+        });
+    }
 }

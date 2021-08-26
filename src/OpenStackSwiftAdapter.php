@@ -267,6 +267,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
      */
     public function listContents(string $path, bool $deep): iterable
     {
+        $path = trim($path, '/');
         $prefix = empty($path) ? '' : $path . '/';
         /** @var iterable<StorageObject> $objects */
         $objects = $this->container->listObjects(['prefix' => $prefix]);
