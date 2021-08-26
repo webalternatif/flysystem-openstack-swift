@@ -1,0 +1,46 @@
+{
+    "name": "webalternatif/flysystem-openstack-swift",
+    "description": "Flysystem v2 adapter for OpenStack Swift",
+    "keywords": ["flysystem", "adapter", "openstack", "swift", "filesystem", "storage"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Web|Alternatif",
+            "email": "contact@webalternatif.com",
+            "homepage": "https://www.webalternatif.com"
+        }
+    ],
+    "require": {
+        "php": "8.0.*",
+        "php-opencloud/openstack": "^3.1",
+        "league/flysystem": "^2.0"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "infection/infection": "^0.24.0",
+        "league/flysystem-adapter-test-utilities": "^2.2",
+        "phpunit/phpunit": "^9.5",
+        "psalm/plugin-phpunit": "^0.16.1",
+        "vimeo/psalm": "^4.9"
+    },
+    "scripts": {
+        "infection": "infection --threads=$(nproc)",
+        "phpunit": "phpunit",
+        "psalm": "psalm --threads=$(nproc) --no-cache",
+        "test": ["@psalm", "@phpunit", "@infection"]
+    },
+    "autoload": {
+        "psr-4": {
+            "Webf\\Flysystem\\OpenStackSwift\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\Webf\\Flysystem\\OpenStackSwift\\": "tests/"
+        }
+    },
+    "config": {
+        "bin-dir": "bin",
+        "sort-packages": true
+    }
+}
