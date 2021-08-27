@@ -7,6 +7,9 @@ use League\Flysystem\Config;
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\StorageAttributes;
 use League\Flysystem\Visibility;
+use OpenStack\Common\Error\BadResponseError;
+use OpenStack\ObjectStore\v1\Models\Container;
+use OpenStack\ObjectStore\v1\Models\StorageObject;
 use OpenStack\OpenStack;
 use Webf\Flysystem\OpenStackSwift\OpenStackSwiftAdapter;
 
@@ -16,20 +19,61 @@ use Webf\Flysystem\OpenStackSwift\OpenStackSwiftAdapter;
  */
 class OpenStackSwiftAdapterTest extends FilesystemAdapterTestCase
 {
+    private static ?Container $container = null;
+
     protected static function createFilesystemAdapter(): FilesystemAdapter
     {
-        $openstack = new OpenStack([
-            'authUrl' => $_ENV['OPENSTACK_AUTH_URL'],
-            'region' => $_ENV['OPENSTACK_REGION'],
-            'user' => [
-                'name' => $_ENV['OPENSTACK_USERNAME'],
-                'password' => $_ENV['OPENSTACK_PASSWORD'],
-                'domain' => ['id' => 'default'],
-            ],
-            'scope' => ['project' => ['id' => $_ENV['OPENSTACK_PROJECT_ID']]],
-        ]);
+        return new OpenStackSwiftAdapter(self::$container);
+    }
 
-        return new OpenStackSwiftAdapter($openstack->objectStoreV1()->getContainer($_ENV['OPENSTACK_CONTAINER_NAME']));
+    public static function setUpBeforeClass(): void
+    {
+        if (null === self::$container) {
+            $openstack = new OpenStack([
+                'authUrl' => $_ENV['OPENSTACK_AUTH_URL'],
+                'region' => $_ENV['OPENSTACK_REGION'],
+                'user' => [
+                    'name' => $_ENV['OPENSTACK_USERNAME'],
+                    'password' => $_ENV['OPENSTACK_PASSWORD'],
+                    'domain' => ['id' => 'default'],
+                ],
+                'scope' => ['project' => ['id' => $_ENV['OPENSTACK_PROJECT_ID']]],
+            ]);
+
+            self::$container = $openstack->objectStoreV1()->createContainer([
+                'name' => uniqid($_ENV['OPENSTACK_CONTAINER_NAME_PREFIX'] ?? ''),
+            ]);
+        }
+
+        parent::setUpBeforeClass();
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        if (null !== self::$container) {
+            try {
+                /** @var StorageObject $object */
+                foreach (self::$container->listObjects() as $object) {
+                    try {
+                        $object->delete();
+                    } catch (BadResponseError $e) {
+                        if (404 !== $e->getResponse()->getStatusCode()) {
+                            throw $e;
+                        }
+                    }
+                }
+
+                self::$container->delete();
+            } catch (BadResponseError $e) {
+                if (404 !== $e->getResponse()->getStatusCode()) {
+                    throw $e;
+                }
+            }
+
+            self::$container = null;
+        }
+
+        parent::tearDownAfterClass();
     }
 
     /**
