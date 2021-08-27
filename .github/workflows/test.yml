@@ -7,10 +7,9 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
-
+  psalm:
+    name: Run Psalm
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
 
@@ -32,8 +31,50 @@ jobs:
       - name: Run Psalm
         run: composer psalm -- --shepherd
 
+  phpunit:
+    name: Run PHPUnit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate --strict
+
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v2
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+
       - name: Run PHPUnit
         run: composer phpunit
+
+  infection:
+    name: Run Infection
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate --strict
+
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v2
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
 
       - name: Run Infection
         run: composer infection
