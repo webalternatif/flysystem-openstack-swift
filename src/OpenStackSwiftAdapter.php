@@ -165,7 +165,13 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
 
         try {
             foreach ($objects as $object) {
-                $object->delete();
+                try {
+                    $object->delete();
+                } catch (BadResponseError $e) {
+                    if (404 !== $e->getResponse()->getStatusCode()) {
+                        throw $e;
+                    }
+                }
             }
         } catch (BadResponseError $e) {
             throw UnableToDeleteDirectory::atLocation($path, $e->getMessage(), $e);
