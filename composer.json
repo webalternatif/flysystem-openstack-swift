@@ -23,10 +23,9 @@
         "vimeo/psalm": "^4.9"
     },
     "scripts": {
-        "infection": "infection --threads=$(nproc)",
         "phpunit": "phpunit",
         "psalm": "psalm --threads=$(nproc) --no-cache",
-        "test": ["@psalm", "@phpunit", "@infection"]
+        "test": ["@psalm", "@phpunit"]
     },
     "autoload": {
         "psr-4": {
