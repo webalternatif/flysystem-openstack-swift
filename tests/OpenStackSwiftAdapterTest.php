@@ -26,7 +26,7 @@ class OpenStackSwiftAdapterTest extends FilesystemAdapterTestCase
                 'password' => $_ENV['OPENSTACK_PASSWORD'],
                 'domain' => ['id' => 'default'],
             ],
-            'scope' => ['project' => ['id' => $_ENV['OPENSTACK_TENANT_ID']]],
+            'scope' => ['project' => ['id' => $_ENV['OPENSTACK_PROJECT_ID']]],
         ]);
 
         return new OpenStackSwiftAdapter($openstack->objectStoreV1()->getContainer($_ENV['OPENSTACK_CONTAINER_NAME']));

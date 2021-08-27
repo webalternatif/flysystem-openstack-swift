@@ -13,7 +13,7 @@
         <env name="OPENSTACK_REGION" value="" />
         <env name="OPENSTACK_USERNAME" value="" />
         <env name="OPENSTACK_PASSWORD" value="" />
-        <env name="OPENSTACK_TENANT_ID" value="" />
+        <env name="OPENSTACK_PROJECT_ID" value="" />
         <env name="OPENSTACK_CONTAINER_NAME" value="" />
     </php>
 
