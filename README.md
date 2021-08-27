@@ -6,7 +6,6 @@
 [![Test status](https://img.shields.io/github/workflow/status/webalternatif/flysystem-openstack-swift/test?label=tests)](https://github.com/webalternatif/flysystem-openstack-swift/actions/workflows/test.yml)
 [![Psalm coverage](https://shepherd.dev/github/webalternatif/flysystem-openstack-swift/coverage.svg)](https://psalm.dev)
 [![Psalm level](https://shepherd.dev/github/webalternatif/flysystem-openstack-swift/level.svg)](https://psalm.dev)
-[![Infection MSI](https://badge.stryker-mutator.io/github.com/webalternatif/flysystem-openstack-swift/master)](https://infection.github.io)
 
 A [Flysystem][1] v2 adapter for OpenStack Swift, using
 [`php-opencloud/openstack`][2].
@@ -78,13 +77,12 @@ all the environment variables, then run:
 $ composer test
 ```
 
-This will run [Psalm][6], [PHPUnit][7] and [Infection][8], but you can run them
-individually like this:
+This will run [Psalm][6] and [PHPUnit][7], but you can run them individually
+like this:
 
 ```bash
 $ composer psalm
 $ composer phpunit
-$ composer infection
 ```
 
 [1]: https://flysystem.thephpleague.com
@@ -94,4 +92,3 @@ $ composer infection
 [5]: https://github.com/thephpleague/flysystem-adapter-test-utilities
 [6]: https://psalm.dev
 [7]: https://phpunit.de
-[8]: https://infection.github.io
