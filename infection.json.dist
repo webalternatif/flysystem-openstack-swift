@@ -6,7 +6,10 @@
     },
     "logs": {
         "text": "var\/log\/infection.log",
-        "perMutator": "php://stdout"
+        "perMutator": "php://stdout",
+        "badge": {
+            "branch": "master"
+        }
     },
     "timeout": 100,
     "tmpDir": "var/cache"

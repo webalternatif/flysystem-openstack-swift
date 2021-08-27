@@ -1,5 +1,13 @@
 # Flysystem v2 OpenStack Swift adapter
 
+[![Source code](https://img.shields.io/badge/source-GitHub-blue)](https://github.com/webalternatif/flysystem-openstack-swift)
+[![Software license](https://img.shields.io/github/license/webalternatif/flysystem-openstack-swift)](https://github.com/webalternatif/flysystem-openstack-swift/blob/master/LICENSE)
+[![GitHub issues](https://img.shields.io/github/issues/webalternatif/flysystem-openstack-swift)](https://github.com/webalternatif/flysystem-openstack-swift/issues)
+[![Test status](https://img.shields.io/github/workflow/status/webalternatif/flysystem-openstack-swift/test?label=tests)](https://github.com/webalternatif/flysystem-openstack-swift/actions/workflows/test.yml)
+[![Psalm coverage](https://shepherd.dev/github/webalternatif/flysystem-openstack-swift/coverage.svg)](https://psalm.dev)
+[![Psalm level](https://shepherd.dev/github/webalternatif/flysystem-openstack-swift/level.svg)](https://psalm.dev)
+[![Infection MSI](https://badge.stryker-mutator.io/github.com/webalternatif/flysystem-openstack-swift/master)](https://infection.github.io)
+
 A [Flysystem][1] v2 adapter for OpenStack Swift, using
 [`php-opencloud/openstack`][2].
 
