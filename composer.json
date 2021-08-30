@@ -40,5 +40,14 @@
     "config": {
         "bin-dir": "bin",
         "sort-packages": true
+    },
+    "archive": {
+        "exclude": [
+            "/.github/",
+            "/tests/",
+            "/.php-cs-fixer.dist.php",
+            "/phpunit.xml.dist",
+            "/psalm.xml"
+        ]
     }
 }
