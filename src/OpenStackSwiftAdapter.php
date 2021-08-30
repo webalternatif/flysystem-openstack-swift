@@ -23,11 +23,28 @@ use League\Flysystem\UnableToWriteFile;
 use OpenStack\Common\Error\BadResponseError;
 use OpenStack\ObjectStore\v1\Models\Container;
 use OpenStack\ObjectStore\v1\Models\StorageObject;
+use OpenStack\OpenStack;
 
 class OpenStackSwiftAdapter implements FilesystemAdapter
 {
-    public function __construct(private Container $container)
+    private ?Container $container = null;
+
+    public function __construct(
+        private OpenStack $openStack,
+        private string $containerName
+    ) {
+    }
+
+    private function getContainer(): Container
     {
+        if (null === $this->container) {
+            $this->container = $this->openStack
+                ->objectStoreV1()
+                ->getContainer($this->containerName)
+            ;
+        }
+
+        return $this->container;
     }
 
     /**
@@ -36,7 +53,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
     public function fileExists(string $path): bool
     {
         try {
-            return $this->container->objectExists($path);
+            return $this->getContainer()->objectExists($path);
         } catch (\Exception $e) {
             throw UnableToCheckFileExistence::forLocation($path, $e);
         }
@@ -53,7 +70,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         ];
 
         try {
-            $this->container->createObject($data);
+            $this->getContainer()->createObject($data);
         } catch (BadResponseError $e) {
             throw UnableToWriteFile::atLocation($path, $e->getMessage(), $e);
         }
@@ -73,7 +90,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         /** @var string $segmentContainer */
         $segmentContainer = $config->get(
             Config::OPTION_SEGMENT_CONTAINER,
-            $this->container->name
+            $this->getContainer()->name
         );
 
         try {
@@ -81,9 +98,9 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
                 $data['segmentSize'] = $segmentSize;
                 $data['segmentContainer'] = $segmentContainer;
 
-                $this->container->createLargeObject($data);
+                $this->getContainer()->createLargeObject($data);
             } else {
-                $this->container->createObject($data);
+                $this->getContainer()->createObject($data);
             }
         } catch (BadResponseError $e) {
             throw UnableToWriteFile::atLocation($path, $e->getMessage(), $e);
@@ -95,7 +112,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
      */
     public function read(string $path): string
     {
-        $object = $this->container->getObject($path);
+        $object = $this->getContainer()->getObject($path);
 
         try {
             $stream = $object->download();
@@ -115,7 +132,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
      */
     public function readStream(string $path)
     {
-        $object = $this->container->getObject($path);
+        $object = $this->getContainer()->getObject($path);
 
         try {
             $stream = $object->download([
@@ -139,7 +156,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
      */
     public function delete(string $path): void
     {
-        $object = $this->container->getObject($path);
+        $object = $this->getContainer()->getObject($path);
 
         try {
             $object->delete();
@@ -159,7 +176,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         $path = rtrim($path, '/') . '/';
 
         /** @var iterable<StorageObject> $objects */
-        $objects = $this->container->listObjects([
+        $objects = $this->getContainer()->listObjects([
             'prefix' => $path,
         ]);
 
@@ -207,7 +224,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
      */
     public function mimeType(string $path): FileAttributes
     {
-        $object = $this->container->getObject($path);
+        $object = $this->getContainer()->getObject($path);
 
         try {
             $object->retrieve();
@@ -229,7 +246,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
      */
     public function lastModified(string $path): FileAttributes
     {
-        $object = $this->container->getObject($path);
+        $object = $this->getContainer()->getObject($path);
 
         try {
             $object->retrieve();
@@ -251,7 +268,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
      */
     public function fileSize(string $path): FileAttributes
     {
-        $object = $this->container->getObject($path);
+        $object = $this->getContainer()->getObject($path);
 
         try {
             $object->retrieve();
@@ -276,7 +293,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         $path = trim($path, '/');
         $prefix = empty($path) ? '' : $path . '/';
         /** @var iterable<StorageObject> $objects */
-        $objects = $this->container->listObjects(['prefix' => $prefix]);
+        $objects = $this->getContainer()->listObjects(['prefix' => $prefix]);
 
         if ($deep) {
             foreach ($objects as $object) {
@@ -326,11 +343,11 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
      */
     public function copy(string $source, string $destination, BaseConfig $config): void
     {
-        $object = $this->container->getObject($source);
+        $object = $this->getContainer()->getObject($source);
 
         try {
             $object->copy([
-                'destination' => sprintf('%s/%s', $this->container->name, $destination),
+                'destination' => sprintf('%s/%s', $this->getContainer()->name, $destination),
             ]);
         } catch (BadResponseError $e) {
             throw UnableToCopyFile::fromLocationTo($source, $destination, $e);

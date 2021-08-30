@@ -36,9 +36,7 @@ $openstack = new OpenStack([
     'scope' => ['project' => ['id' => '{projectId}']],
 ]);
 
-$container = $openstack->objectStoreV1()->getContainer('{containerName}');
-
-$adapter = new OpenStackSwiftAdapter($container);
+$adapter = new OpenStackSwiftAdapter($openstack, '{containerName}');
 
 $flysystem = new Filesystem($adapter);
 ```

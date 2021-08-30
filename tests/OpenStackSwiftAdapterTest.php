@@ -20,29 +20,32 @@ use Webf\Flysystem\OpenStackSwift\OpenStackSwiftAdapter;
 class OpenStackSwiftAdapterTest extends FilesystemAdapterTestCase
 {
     private static ?Container $container = null;
+    private static ?string $containerName = null;
 
     protected static function createFilesystemAdapter(): FilesystemAdapter
     {
-        return new OpenStackSwiftAdapter(self::$container);
+        $openstack = new OpenStack([
+            'authUrl' => $_ENV['OPENSTACK_AUTH_URL'],
+            'region' => $_ENV['OPENSTACK_REGION'],
+            'user' => [
+                'name' => $_ENV['OPENSTACK_USERNAME'],
+                'password' => $_ENV['OPENSTACK_PASSWORD'],
+                'domain' => ['id' => 'default'],
+            ],
+            'scope' => ['project' => ['id' => $_ENV['OPENSTACK_PROJECT_ID']]],
+        ]);
+
+        self::$container = $openstack->objectStoreV1()->createContainer([
+            'name' => self::$containerName,
+        ]);
+
+        return new OpenStackSwiftAdapter($openstack, self::$containerName);
     }
 
     public static function setUpBeforeClass(): void
     {
-        if (null === self::$container) {
-            $openstack = new OpenStack([
-                'authUrl' => $_ENV['OPENSTACK_AUTH_URL'],
-                'region' => $_ENV['OPENSTACK_REGION'],
-                'user' => [
-                    'name' => $_ENV['OPENSTACK_USERNAME'],
-                    'password' => $_ENV['OPENSTACK_PASSWORD'],
-                    'domain' => ['id' => 'default'],
-                ],
-                'scope' => ['project' => ['id' => $_ENV['OPENSTACK_PROJECT_ID']]],
-            ]);
-
-            self::$container = $openstack->objectStoreV1()->createContainer([
-                'name' => uniqid($_ENV['OPENSTACK_CONTAINER_NAME_PREFIX'] ?? ''),
-            ]);
+        if (null === self::$containerName) {
+            self::$containerName = uniqid($_ENV['OPENSTACK_CONTAINER_NAME_PREFIX'] ?? '');
         }
 
         parent::setUpBeforeClass();
