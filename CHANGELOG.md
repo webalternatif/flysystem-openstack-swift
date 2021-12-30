@@ -1,3 +1,9 @@
+## v0.2.1 (unreleased)
+
+### ✨ New features
+
+* Add support of PHP 8.1
+
 ## v0.2.0 (August 30, 2021)
 
 ### 💥 Breaking changes

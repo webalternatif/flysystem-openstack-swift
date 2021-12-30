@@ -10,8 +10,19 @@ jobs:
   psalm:
     name: Run Psalm
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version:
+          - "8.0"
+          - "8.1"
     steps:
       - uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer:2.1
 
       - name: Validate composer.json and composer.lock
         run: composer validate --strict
@@ -20,22 +31,34 @@ jobs:
         id: composer-cache
         uses: actions/cache@v2
         with:
-          path: vendor
-          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-php-
+          path: |
+            ~/.composer/cache
+            vendor
+          key: php-${{ matrix.php-version }}
+          restore-keys: php-${{ matrix.php-version }}
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
 
       - name: Run Psalm
-        run: composer psalm -- --shepherd
+        run: composer psalm -- --php-version=${{ matrix.php-version }} --shepherd
 
   phpunit:
     name: Run PHPUnit
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version:
+          - "8.0"
+          - "8.1"
     steps:
       - uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer:2.1
 
       - name: Validate composer.json and composer.lock
         run: composer validate --strict
@@ -44,10 +67,11 @@ jobs:
         id: composer-cache
         uses: actions/cache@v2
         with:
-          path: vendor
-          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-php-
+          path: |
+            ~/.composer/cache
+            vendor
+          key: php-${{ matrix.php-version }}
+          restore-keys: php-${{ matrix.php-version }}
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress

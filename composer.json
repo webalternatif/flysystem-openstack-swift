@@ -1,6 +1,7 @@
 {
     "name": "webalternatif/flysystem-openstack-swift",
     "description": "Flysystem v2 adapter for OpenStack Swift",
+    "type": "library",
     "keywords": ["flysystem", "adapter", "openstack", "swift", "filesystem", "storage"],
     "license": "MIT",
     "authors": [
@@ -11,13 +12,13 @@
         }
     ],
     "require": {
-        "php": "8.0.*",
+        "php": "8.0.* || 8.1.*",
         "php-opencloud/openstack": "^3.1",
         "league/flysystem": "^2.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.0",
-        "league/flysystem-adapter-test-utilities": "^2.2",
+        "league/flysystem-adapter-test-utilities": "^2.2 <2.3.2",
         "phpunit/phpunit": "^9.5",
         "psalm/plugin-phpunit": "^0.16.1",
         "vimeo/psalm": "^4.9"
