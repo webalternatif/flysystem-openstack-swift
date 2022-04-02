@@ -11,6 +11,7 @@ use League\Flysystem\DirectoryAttributes;
 use League\Flysystem\FileAttributes;
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\FilesystemException;
+use League\Flysystem\UnableToCheckDirectoryExistence;
 use League\Flysystem\UnableToCheckFileExistence;
 use League\Flysystem\UnableToCopyFile;
 use League\Flysystem\UnableToDeleteDirectory;
@@ -56,6 +57,21 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
             return $this->getContainer()->objectExists($path);
         } catch (\Exception $e) {
             throw UnableToCheckFileExistence::forLocation($path, $e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function directoryExists(string $path): bool
+    {
+        try {
+            return $this->getContainer()
+                ->listObjects(['prefix' => $path])
+                ->valid()
+            ;
+        } catch (\Exception $e) {
+            throw UnableToCheckDirectoryExistence::forLocation($path, $e);
         }
     }
 

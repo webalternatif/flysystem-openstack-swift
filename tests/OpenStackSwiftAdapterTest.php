@@ -100,6 +100,11 @@ class OpenStackSwiftAdapterTest extends FilesystemAdapterTestCase
         });
     }
 
+    public function checking_if_a_directory_exists_after_creating_it(): void
+    {
+        // Directory creation is not supported
+    }
+
     /**
      * Directories may not be provided in deep listings. See {@link https://github.com/thephpleague/flysystem-adapter-test-utilities/issues/3}.
      *
