@@ -191,7 +191,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
     public function deleteDirectory(string $path): void
     {
         // Make sure a slash is added to the end.
-        $path = rtrim($path, '/') . '/';
+        $path = rtrim($path, '/').'/';
 
         /** @var iterable<StorageObject> $objects */
         $objects = $this->getContainer()->listObjects([
@@ -309,7 +309,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
     public function listContents(string $path, bool $deep): iterable
     {
         $path = trim($path, '/');
-        $prefix = empty($path) ? '' : $path . '/';
+        $prefix = empty($path) ? '' : $path.'/';
         /** @var iterable<StorageObject> $objects */
         $objects = $this->getContainer()->listObjects(['prefix' => $prefix]);
 
@@ -329,7 +329,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
 
                 if ($dirname === $path) {
                     yield $this->createFileAttributesFrom($object);
-                } elseif (str_starts_with($object->name, empty($path) ? '' : $path . '/')) {
+                } elseif (str_starts_with($object->name, empty($path) ? '' : $path.'/')) {
                     $relativeName = trim(substr($object->name, strlen($path)), '/');
                     $firstDirectory = explode('/', $relativeName)[0];
 
