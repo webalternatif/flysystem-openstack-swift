@@ -87,7 +87,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
 
         try {
             $this->getContainer()->createObject($data);
-        } catch (BadResponseError $e) {
+        } catch (\Exception $e) {
             throw UnableToWriteFile::atLocation($path, $e->getMessage(), $e);
         }
     }
@@ -118,7 +118,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
             } else {
                 $this->getContainer()->createObject($data);
             }
-        } catch (BadResponseError $e) {
+        } catch (\Exception $e) {
             throw UnableToWriteFile::atLocation($path, $e->getMessage(), $e);
         }
     }
@@ -138,7 +138,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
             }
 
             return $stream->getContents();
-        } catch (BadResponseError|\RuntimeException $e) {
+        } catch (\Exception $e) {
             throw UnableToReadFile::fromLocation($path, $e->getMessage(), $e);
         }
     }
@@ -162,7 +162,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
             }
 
             return StreamWrapper::getResource($stream);
-        } catch (BadResponseError|\InvalidArgumentException|\RuntimeException $e) {
+        } catch (\Exception $e) {
             throw UnableToReadFile::fromLocation($path, $e->getMessage(), $e);
         }
     }
@@ -180,6 +180,8 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
             if (404 !== $e->getResponse()->getStatusCode()) {
                 throw UnableToDeleteFile::atLocation($path, $e->getMessage(), $e);
             }
+        } catch (\Exception $e) {
+            throw UnableToDeleteFile::atLocation($path, $e->getMessage(), $e);
         }
     }
 
@@ -206,7 +208,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
                     }
                 }
             }
-        } catch (BadResponseError $e) {
+        } catch (\Exception $e) {
             throw UnableToDeleteDirectory::atLocation($path, $e->getMessage(), $e);
         }
     }
@@ -244,7 +246,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
 
         try {
             $object->retrieve();
-        } catch (BadResponseError $e) {
+        } catch (\Exception $e) {
             throw UnableToRetrieveMetadata::mimeType($path, $e->getMessage(), $e);
         }
 
@@ -266,7 +268,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
 
         try {
             $object->retrieve();
-        } catch (BadResponseError $e) {
+        } catch (\Exception $e) {
             throw UnableToRetrieveMetadata::lastModified($path, $e->getMessage(), $e);
         }
 
@@ -288,7 +290,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
 
         try {
             $object->retrieve();
-        } catch (BadResponseError $e) {
+        } catch (\Exception $e) {
             throw UnableToRetrieveMetadata::fileSize($path, $e->getMessage(), $e);
         }
 
@@ -365,7 +367,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
             $object->copy([
                 'destination' => sprintf('%s/%s', $this->getContainer()->name, $destination),
             ]);
-        } catch (BadResponseError $e) {
+        } catch (\Exception $e) {
             throw UnableToCopyFile::fromLocationTo($source, $destination, $e);
         }
     }

@@ -1,3 +1,9 @@
+## v0.3.1 (unreleased)
+
+### 🐛 Bug fixes
+
+* Transform all exceptions to FilesystemException
+
 ## v0.3.0 (April 2, 2022)
 
 ### 💥 Breaking changes
