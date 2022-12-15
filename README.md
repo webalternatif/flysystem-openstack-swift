@@ -1,4 +1,4 @@
-# Flysystem v2 OpenStack Swift adapter
+# Flysystem v3 OpenStack Swift adapter
 
 [![Source code](https://img.shields.io/badge/source-GitHub-blue)](https://github.com/webalternatif/flysystem-openstack-swift)
 [![Software license](https://img.shields.io/github/license/webalternatif/flysystem-openstack-swift)](https://github.com/webalternatif/flysystem-openstack-swift/blob/master/LICENSE)
@@ -7,7 +7,7 @@
 [![Psalm coverage](https://shepherd.dev/github/webalternatif/flysystem-openstack-swift/coverage.svg)](https://psalm.dev)
 [![Psalm level](https://shepherd.dev/github/webalternatif/flysystem-openstack-swift/level.svg)](https://psalm.dev)
 
-A [Flysystem][1] v2 adapter for OpenStack Swift, using
+A [Flysystem][1] v3 adapter for OpenStack Swift, using
 [`php-opencloud/openstack`][2].
 
 If you're looking for a Flysystem v1 adapter, see
