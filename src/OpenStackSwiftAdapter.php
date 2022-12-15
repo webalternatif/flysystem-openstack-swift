@@ -48,9 +48,6 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         return $this->container;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function fileExists(string $path): bool
     {
         try {
@@ -60,9 +57,6 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function directoryExists(string $path): bool
     {
         try {
@@ -75,9 +69,6 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function write(string $path, string $contents, BaseConfig $config): void
     {
         $data = [
@@ -92,9 +83,6 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function writeStream(string $path, $contents, BaseConfig $config): void
     {
         $data = [
@@ -123,9 +111,6 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function read(string $path): string
     {
         $object = $this->getContainer()->getObject($path);
@@ -143,9 +128,6 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function readStream(string $path)
     {
         $object = $this->getContainer()->getObject($path);
@@ -167,9 +149,6 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function delete(string $path): void
     {
         $object = $this->getContainer()->getObject($path);
@@ -185,9 +164,6 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function deleteDirectory(string $path): void
     {
         // Make sure a slash is added to the end.
@@ -213,33 +189,21 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function createDirectory(string $path, BaseConfig $config): void
     {
         // TODO add option in constructor to enable creating empty files to simulate directories
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setVisibility(string $path, string $visibility): void
     {
         throw UnableToSetVisibility::atLocation($path, 'OpenStack Swift does not support per-file visibility.');
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function visibility(string $path): FileAttributes
     {
         throw UnableToRetrieveMetadata::visibility($path, 'OpenStack Swift does not support per-file visibility.');
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function mimeType(string $path): FileAttributes
     {
         $object = $this->getContainer()->getObject($path);
@@ -259,9 +223,6 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         return $fileAttributes;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function lastModified(string $path): FileAttributes
     {
         $object = $this->getContainer()->getObject($path);
@@ -281,9 +242,6 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         return $fileAttributes;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function fileSize(string $path): FileAttributes
     {
         $object = $this->getContainer()->getObject($path);
@@ -303,9 +261,6 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         return $fileAttributes;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function listContents(string $path, bool $deep): iterable
     {
         $path = trim($path, '/');
@@ -343,9 +298,6 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function move(string $source, string $destination, BaseConfig $config): void
     {
         try {
@@ -356,9 +308,6 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function copy(string $source, string $destination, BaseConfig $config): void
     {
         $object = $this->getContainer()->getObject($source);
