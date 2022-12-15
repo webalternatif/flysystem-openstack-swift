@@ -1,5 +1,9 @@
 ## v0.3.1 (unreleased)
 
+### ✨ New features
+
+* Add support of PHP 8.2
+
 ### 🐛 Bug fixes
 
 * Transform all exceptions to FilesystemException
