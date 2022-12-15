@@ -1,12 +1,12 @@
-## v0.3.1 (unreleased)
+## v0.3.1 (December 15, 2022)
 
 ### ✨ New features
 
-* Add support of PHP 8.2
+* Add support of PHP 8.2 ([#2](https://github.com/webalternatif/flysystem-openstack-swift/pull/2))
 
 ### 🐛 Bug fixes
 
-* Transform all exceptions to FilesystemException
+* Transform all exceptions to FilesystemException ([ece0468](https://github.com/webalternatif/flysystem-openstack-swift/commit/ece0468d73b67b47d2d6b86e87f7bc4d61d0966b))
 
 ## v0.3.0 (April 2, 2022)
 
