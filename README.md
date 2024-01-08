@@ -1,9 +1,9 @@
 # Flysystem v3 OpenStack Swift adapter
 
 [![Source code](https://img.shields.io/badge/source-GitHub-blue)](https://github.com/webalternatif/flysystem-openstack-swift)
-[![Software license](https://img.shields.io/github/license/webalternatif/flysystem-openstack-swift)](https://github.com/webalternatif/flysystem-openstack-swift/blob/master/LICENSE)
+[![Software license](https://img.shields.io/github/license/webalternatif/flysystem-openstack-swift)](https://github.com/webalternatif/flysystem-openstack-swift/blob/main/LICENSE)
 [![GitHub issues](https://img.shields.io/github/issues/webalternatif/flysystem-openstack-swift)](https://github.com/webalternatif/flysystem-openstack-swift/issues)
-[![Test status](https://img.shields.io/github/actions/workflow/status/webalternatif/flysystem-openstack-swift/test.yml?branch=master&label=tests)](https://github.com/webalternatif/flysystem-openstack-swift/actions/workflows/test.yml)
+[![Test status](https://img.shields.io/github/actions/workflow/status/webalternatif/flysystem-openstack-swift/test.yml?branch=main&label=tests)](https://github.com/webalternatif/flysystem-openstack-swift/actions/workflows/test.yml)
 [![Psalm coverage](https://shepherd.dev/github/webalternatif/flysystem-openstack-swift/coverage.svg)](https://psalm.dev)
 [![Psalm level](https://shepherd.dev/github/webalternatif/flysystem-openstack-swift/level.svg)](https://psalm.dev)
 
