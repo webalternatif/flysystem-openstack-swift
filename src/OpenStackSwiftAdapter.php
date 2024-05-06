@@ -335,7 +335,10 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         if ($lastModified instanceof \DateTimeInterface) {
             $lastModified = $lastModified->getTimestamp();
         } else {
-            $lastModified = strtotime($lastModified) ?: null;
+            $lastModified = strtotime($lastModified);
+            if (!($lastModified > 0)) {
+                $lastModified = null;
+            }
         }
 
         $mimeType = empty($object->contentType) ? null : $object->contentType;
