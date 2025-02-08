@@ -61,7 +61,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
     {
         try {
             return $this->getContainer()
-                ->listObjects(['prefix' => $path])
+                ->listObjects(['prefix' => $path.'/'])
                 ->valid()
             ;
         } catch (\Exception $e) {
@@ -300,6 +300,10 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
 
     public function move(string $source, string $destination, BaseConfig $config): void
     {
+        if ($source === $destination) {
+            return;
+        }
+
         try {
             $this->copy($source, $destination, $config);
             $this->delete($source);
