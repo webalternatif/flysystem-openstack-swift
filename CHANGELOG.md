@@ -1,3 +1,18 @@
+## v0.4.0 (unreleased)
+
+### 💥 Breaking changes
+
+* Drop support of PHP 8.0
+
+### ✨ New features
+
+* Add support of PHP 8.4
+
+### 🐛 Bug fixes
+
+* Fix `OpenStackSwiftAdapter::move` deleting the file if source and destination are the same (detected by https://github.com/thephpleague/flysystem-adapter-test-utilities/commit/83b40c1a8a8a40be435a9683a7554396134ab1c4)
+* Fix `OpenStackSwiftAdapter::directoryExists` returning `true` for files (detected by https://github.com/thephpleague/flysystem-adapter-test-utilities/commit/ab92311b06ca0bdb5a16e93dc29be7774c1c6f2a)
+
 ## v0.3.2 (May 6, 2024)
 
 ### ✨ New features
