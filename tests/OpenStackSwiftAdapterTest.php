@@ -235,6 +235,24 @@ class OpenStackSwiftAdapterTest extends FilesystemAdapterTestCase
         // Directory creation is not supported
     }
 
+    /**
+     * Directory creation is not supported.
+     *
+     * @test
+     */
+    public function file_exists_on_directory_is_false(): void
+    {
+        $this->runScenario(function () {
+            $adapter = $this->adapter();
+
+            $this->assertFalse($adapter->directoryExists('test'));
+            $adapter->createDirectory('test', new Config());
+
+//            $this->assertTrue($adapter->directoryExists('test'));
+            $this->assertFalse($adapter->fileExists('test'));
+        });
+    }
+
     public function test_listing_slash_is_equivalent_to_listing_empty_string(): void
     {
         $this->runScenario(function () {
