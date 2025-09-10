@@ -26,7 +26,7 @@ use OpenStack\ObjectStore\v1\Models\Container;
 use OpenStack\ObjectStore\v1\Models\StorageObject;
 use OpenStack\OpenStack;
 
-class OpenStackSwiftAdapter implements FilesystemAdapter
+final class OpenStackSwiftAdapter implements FilesystemAdapter
 {
     private ?Container $container = null;
 
@@ -48,6 +48,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         return $this->container;
     }
 
+    #[\Override]
     public function fileExists(string $path): bool
     {
         try {
@@ -57,6 +58,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
+    #[\Override]
     public function directoryExists(string $path): bool
     {
         try {
@@ -69,6 +71,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
+    #[\Override]
     public function write(string $path, string $contents, BaseConfig $config): void
     {
         $data = [
@@ -83,6 +86,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
+    #[\Override]
     public function writeStream(string $path, $contents, BaseConfig $config): void
     {
         $data = [
@@ -111,6 +115,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
+    #[\Override]
     public function read(string $path): string
     {
         $object = $this->getContainer()->getObject($path);
@@ -128,6 +133,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
+    #[\Override]
     public function readStream(string $path)
     {
         $object = $this->getContainer()->getObject($path);
@@ -149,6 +155,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
+    #[\Override]
     public function delete(string $path): void
     {
         $object = $this->getContainer()->getObject($path);
@@ -164,6 +171,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
+    #[\Override]
     public function deleteDirectory(string $path): void
     {
         // Make sure a slash is added to the end.
@@ -189,21 +197,25 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
+    #[\Override]
     public function createDirectory(string $path, BaseConfig $config): void
     {
         // TODO add option in constructor to enable creating empty files to simulate directories
     }
 
+    #[\Override]
     public function setVisibility(string $path, string $visibility): void
     {
         throw UnableToSetVisibility::atLocation($path, 'OpenStack Swift does not support per-file visibility.');
     }
 
+    #[\Override]
     public function visibility(string $path): FileAttributes
     {
         throw UnableToRetrieveMetadata::visibility($path, 'OpenStack Swift does not support per-file visibility.');
     }
 
+    #[\Override]
     public function mimeType(string $path): FileAttributes
     {
         $object = $this->getContainer()->getObject($path);
@@ -223,6 +235,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         return $fileAttributes;
     }
 
+    #[\Override]
     public function lastModified(string $path): FileAttributes
     {
         $object = $this->getContainer()->getObject($path);
@@ -242,6 +255,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         return $fileAttributes;
     }
 
+    #[\Override]
     public function fileSize(string $path): FileAttributes
     {
         $object = $this->getContainer()->getObject($path);
@@ -261,6 +275,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         return $fileAttributes;
     }
 
+    #[\Override]
     public function listContents(string $path, bool $deep): iterable
     {
         $path = trim($path, '/');
@@ -298,6 +313,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
+    #[\Override]
     public function move(string $source, string $destination, BaseConfig $config): void
     {
         if ($source === $destination) {
@@ -312,6 +328,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
+    #[\Override]
     public function copy(string $source, string $destination, BaseConfig $config): void
     {
         $object = $this->getContainer()->getObject($source);

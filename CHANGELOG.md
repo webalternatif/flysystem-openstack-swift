@@ -1,3 +1,9 @@
+## v0.5.0 (unreleased)
+
+### 💥 Breaking changes
+
+* Make classes final
+
 ## v0.4.0 (February 8, 2025)
 
 ### 💥 Breaking changes
