@@ -24,9 +24,11 @@
         "vimeo/psalm": "^6.5"
     },
     "scripts": {
+        "cs-check": "php-cs-fixer fix --dry-run",
+        "cs-fix": "php-cs-fixer fix",
         "phpunit": "phpunit",
         "psalm": "psalm --threads=$(nproc) --no-cache",
-        "test": ["@psalm", "@phpunit"]
+        "test": ["@psalm", "@phpunit", "@cs-check"]
     },
     "autoload": {
         "psr-4": {

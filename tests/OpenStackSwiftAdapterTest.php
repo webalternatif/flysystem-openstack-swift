@@ -15,6 +15,7 @@ use Webf\Flysystem\OpenStackSwift\OpenStackSwiftAdapter;
 
 /**
  * @internal
+ *
  * @covers \Webf\Flysystem\OpenStackSwift\OpenStackSwiftAdapter
  */
 class OpenStackSwiftAdapterTest extends FilesystemAdapterTestCase
@@ -109,8 +110,8 @@ class OpenStackSwiftAdapterTest extends FilesystemAdapterTestCase
 
             $contents = $adapter->read('path.txt');
             $this->assertEquals('new contents', $contents);
-//            $visibility = $adapter->visibility('path.txt')->visibility();
-//            $this->assertEquals(Visibility::PRIVATE, $visibility);
+            // $visibility = $adapter->visibility('path.txt')->visibility();
+            // $this->assertEquals(Visibility::PRIVATE, $visibility);
         });
     }
 
@@ -134,7 +135,7 @@ class OpenStackSwiftAdapterTest extends FilesystemAdapterTestCase
             $listing = $adapter->listContents('', true);
             /** @var StorageAttributes[] $items */
             $items = iterator_to_array($listing);
-//            $this->assertCount(2, $items, $this->formatIncorrectListingCount($items));
+            // $this->assertCount(2, $items, $this->formatIncorrectListingCount($items));
 
             $paths = array_map(
                 fn (StorageAttributes $item) => $item->path(),
@@ -180,7 +181,7 @@ class OpenStackSwiftAdapterTest extends FilesystemAdapterTestCase
 
             $this->assertTrue($adapter->fileExists('source.txt'));
             $this->assertTrue($adapter->fileExists('destination.txt'));
-//            $this->assertEquals(Visibility::PUBLIC, $adapter->visibility('destination.txt')->visibility());
+            // $this->assertEquals(Visibility::PUBLIC, $adapter->visibility('destination.txt')->visibility());
             $this->assertEquals('contents to be copied', $adapter->read('destination.txt'));
         });
     }
@@ -205,7 +206,7 @@ class OpenStackSwiftAdapterTest extends FilesystemAdapterTestCase
 
             $this->assertTrue($adapter->fileExists('source.txt'));
             $this->assertTrue($adapter->fileExists('destination.txt'));
-//            $this->assertEquals(Visibility::PUBLIC, $adapter->visibility('destination.txt')->visibility());
+            // $this->assertEquals(Visibility::PUBLIC, $adapter->visibility('destination.txt')->visibility());
             $this->assertEquals('contents to be copied', $adapter->read('destination.txt'));
         });
     }
@@ -234,7 +235,7 @@ class OpenStackSwiftAdapterTest extends FilesystemAdapterTestCase
                 $adapter->fileExists('destination.txt'),
                 'After moving, a file should be present at the new location.'
             );
-//            $this->assertEquals(Visibility::PUBLIC, $adapter->visibility('destination.txt')->visibility());
+            // $this->assertEquals(Visibility::PUBLIC, $adapter->visibility('destination.txt')->visibility());
             $this->assertEquals('contents to be copied', $adapter->read('destination.txt'));
         });
     }
@@ -262,7 +263,7 @@ class OpenStackSwiftAdapterTest extends FilesystemAdapterTestCase
             $this->assertFalse($adapter->directoryExists('test'));
             $adapter->createDirectory('test', new Config());
 
-//            $this->assertTrue($adapter->directoryExists('test'));
+            // $this->assertTrue($adapter->directoryExists('test'));
             $this->assertFalse($adapter->fileExists('test'));
         });
     }
