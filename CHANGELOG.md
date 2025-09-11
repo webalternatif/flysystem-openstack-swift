@@ -4,15 +4,19 @@
 
 * Make classes final
 
+### ✨ New features
+
+* Add support for temporary URLs
+
 ## v0.4.0 (February 8, 2025)
 
 ### 💥 Breaking changes
 
-* Drop support of PHP 8.0 ([#7](https://github.com/webalternatif/flysystem-dsn/pull/7))
+* Drop support for PHP 8.0 ([#7](https://github.com/webalternatif/flysystem-dsn/pull/7))
 
 ### ✨ New features
 
-* Add support of PHP 8.4 ([#7](https://github.com/webalternatif/flysystem-dsn/pull/7))
+* Add support for PHP 8.4 ([#7](https://github.com/webalternatif/flysystem-dsn/pull/7))
 
 ### 🐛 Bug fixes
 
@@ -23,13 +27,13 @@
 
 ### ✨ New features
 
-* Add support of PHP 8.3 ([#6](https://github.com/webalternatif/flysystem-dsn/pull/6))
+* Add support for PHP 8.3 ([#6](https://github.com/webalternatif/flysystem-dsn/pull/6))
 
 ## v0.3.1 (December 15, 2022)
 
 ### ✨ New features
 
-* Add support of PHP 8.2 ([#2](https://github.com/webalternatif/flysystem-openstack-swift/pull/2))
+* Add support for PHP 8.2 ([#2](https://github.com/webalternatif/flysystem-openstack-swift/pull/2))
 
 ### 🐛 Bug fixes
 
@@ -45,7 +49,7 @@
 
 ### ✨ New features
 
-* Add support of PHP 8.1 ([78c83c5](https://github.com/webalternatif/flysystem-openstack-swift/commit/78c83c525f0d1f42ffa8ac954a6efb11d261df5a))
+* Add support for PHP 8.1 ([78c83c5](https://github.com/webalternatif/flysystem-openstack-swift/commit/78c83c525f0d1f42ffa8ac954a6efb11d261df5a))
 
 ## v0.2.0 (August 30, 2021)
 

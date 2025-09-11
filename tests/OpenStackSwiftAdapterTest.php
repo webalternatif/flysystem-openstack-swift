@@ -39,7 +39,21 @@ class OpenStackSwiftAdapterTest extends FilesystemAdapterTestCase
             'name' => self::$containerName,
         ]);
 
-        return new OpenStackSwiftAdapter($openstack, self::$containerName);
+        self::$container->execute(
+            [
+                'method' => 'POST',
+                'path' => self::$containerName,
+                'params' => [
+                    'tempUrlKey' => [
+                        'location' => 'header',
+                        'sentAs' => 'X-Container-Meta-Temp-URL-Key',
+                    ],
+                ],
+            ],
+            ['tempUrlKey' => $containerTempUrlKey = uniqid()]
+        );
+
+        return new OpenStackSwiftAdapter($openstack, self::$containerName, $containerTempUrlKey);
     }
 
     public static function setUpBeforeClass(): void
@@ -270,5 +284,38 @@ class OpenStackSwiftAdapterTest extends FilesystemAdapterTestCase
                 iterator_to_array($adapter->listContents('/', true))
             );
         });
+    }
+
+    public function test_temporary_url_cannot_be_used_to_access_another_file(): void
+    {
+        $adapter = $this->adapter();
+
+        $adapter->write('some/file1.txt', 'file 1 contents', new Config(['visibility' => 'private']));
+        $adapter->write('some/file2.txt', 'file 2 contents', new Config(['visibility' => 'private']));
+
+        $expiresAt = (new \DateTimeImmutable())->add(\DateInterval::createFromDateString('1 minute'));
+        $url = $adapter->temporaryUrl('some/file1.txt', $expiresAt, new Config());
+        $contents = file_get_contents($url);
+        self::assertEquals('file 1 contents', $contents);
+
+        $url = str_replace('file1.txt', 'file2.txt', $url);
+        self::assertFalse(@file_get_contents($url));
+    }
+
+    public function test_generating_prefixed_temporary_url(): void
+    {
+        $adapter = $this->adapter();
+
+        $adapter->write('some/file1.txt', 'file 1 contents', new Config(['visibility' => 'private']));
+        $adapter->write('some/file2.txt', 'file 2 contents', new Config(['visibility' => 'private']));
+
+        $expiresAt = (new \DateTimeImmutable())->add(\DateInterval::createFromDateString('1 minute'));
+        $url = $adapter->temporaryUrl('some', $expiresAt, new Config(['prefix' => true]));
+
+        $contents = file_get_contents(str_replace('/some?', '/some/file1.txt?', $url));
+        self::assertEquals('file 1 contents', $contents);
+
+        $contents = file_get_contents(str_replace('/some?', '/some/file2.txt?', $url));
+        self::assertEquals('file 2 contents', $contents);
     }
 }

@@ -21,18 +21,20 @@ use League\Flysystem\UnableToReadFile;
 use League\Flysystem\UnableToRetrieveMetadata;
 use League\Flysystem\UnableToSetVisibility;
 use League\Flysystem\UnableToWriteFile;
+use League\Flysystem\UrlGeneration\TemporaryUrlGenerator;
 use OpenStack\Common\Error\BadResponseError;
 use OpenStack\ObjectStore\v1\Models\Container;
 use OpenStack\ObjectStore\v1\Models\StorageObject;
 use OpenStack\OpenStack;
 
-final class OpenStackSwiftAdapter implements FilesystemAdapter
+final class OpenStackSwiftAdapter implements FilesystemAdapter, TemporaryUrlGenerator
 {
     private ?Container $container = null;
 
     public function __construct(
         private OpenStack $openStack,
-        private string $containerName
+        private string $containerName,
+        private ?string $tempUrlKey = null,
     ) {
     }
 
@@ -370,6 +372,46 @@ final class OpenStackSwiftAdapter implements FilesystemAdapter
             null,
             $lastModified,
             $mimeType
+        );
+    }
+
+    /**
+     * Available options in {@param $config} are:
+     * - {@see Config::OPTION_DIGEST}: the digest algorithm to use for the HMAC cryptographic signature (given as first
+     *   parameter of {@see hash_hmac}), default: sha256.
+     * - {@see Config::OPTION_FILE_NAME}: a string to override the default file name (which is based on the object name).
+     * - {@see Config::OPTION_PREFIX}: if `true`, a prefix-based temporary URL will be generated, default: `false`.
+     *
+     * For more information, see {@see https://docs.openstack.org/swift/latest/api/temporary_url_middleware.html}.
+     */
+    #[\Override]
+    public function temporaryUrl(string $path, \DateTimeInterface $expiresAt, BaseConfig $config): string
+    {
+        $expires = $expiresAt->getTimestamp();
+
+        $queryParams = [
+            'temp_url_expires' => $expires,
+        ];
+
+        $url = $this->getContainer()->getObject($path)->getPublicUri()->__toString();
+        $hmacPath = preg_replace('#(.*)v1#U', '/v1', $url, 1);
+
+        if (true === $config->get(Config::OPTION_PREFIX)) {
+            $hmacPath = "prefix:{$hmacPath}";
+            $queryParams['temp_url_prefix'] = $path;
+        }
+
+        $hmacBody = "GET\n{$expires}\n{$hmacPath}";
+        $digest = (string) $config->get(Config::OPTION_DIGEST, 'sha256');
+        $queryParams['temp_url_sig'] = hash_hmac($digest, $hmacBody, $this->tempUrlKey ?? '');
+
+        if (null !== ($fileName = $config->get(Config::OPTION_FILE_NAME))) {
+            $queryParams['filename'] = $fileName;
+        }
+
+        return sprintf(
+            "{$url}?%s",
+            join('&', array_map(fn ($k, $v) => "{$k}={$v}", array_keys($queryParams), $queryParams))
         );
     }
 }
