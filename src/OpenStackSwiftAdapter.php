@@ -405,7 +405,9 @@ final class OpenStackSwiftAdapter implements FilesystemAdapter, TemporaryUrlGene
         $digest = (string) $config->get(Config::OPTION_DIGEST, 'sha256');
         $queryParams['temp_url_sig'] = hash_hmac($digest, $hmacBody, $this->tempUrlKey ?? '');
 
-        if (null !== ($fileName = $config->get(Config::OPTION_FILE_NAME))) {
+        /** @var string|null $fileName */
+        $fileName = $config->get(Config::OPTION_FILE_NAME);
+        if (is_string($fileName)) {
             $queryParams['filename'] = $fileName;
         }
 
