@@ -6,6 +6,7 @@ use League\Flysystem\AdapterTestUtilities\FilesystemAdapterTestCase;
 use League\Flysystem\Config;
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\StorageAttributes;
+use League\Flysystem\UnableToGenerateTemporaryUrl;
 use League\Flysystem\Visibility;
 use OpenStack\Common\Error\BadResponseError;
 use OpenStack\ObjectStore\v1\Models\Container;
@@ -23,9 +24,9 @@ class OpenStackSwiftAdapterTest extends FilesystemAdapterTestCase
     private static ?Container $container = null;
     private static ?string $containerName = null;
 
-    protected static function createFilesystemAdapter(): FilesystemAdapter
+    private static function createOpenStack(): OpenStack
     {
-        $openstack = new OpenStack([
+        return new OpenStack([
             'authUrl' => $_ENV['OPENSTACK_AUTH_URL'],
             'region' => $_ENV['OPENSTACK_REGION'],
             'user' => [
@@ -35,6 +36,11 @@ class OpenStackSwiftAdapterTest extends FilesystemAdapterTestCase
             ],
             'scope' => ['project' => ['id' => $_ENV['OPENSTACK_PROJECT_ID']]],
         ]);
+    }
+
+    protected static function createFilesystemAdapter(): FilesystemAdapter
+    {
+        $openstack = self::createOpenStack();
 
         self::$container = $openstack->objectStoreV1()->createContainer([
             'name' => self::$containerName,
@@ -318,5 +324,15 @@ class OpenStackSwiftAdapterTest extends FilesystemAdapterTestCase
 
         $contents = file_get_contents(str_replace('/some?', '/some/file2.txt?', $url));
         self::assertEquals('file 2 contents', $contents);
+    }
+
+    public function test_temporary_url_generation_needs_secret_key(): void
+    {
+        $openstack = self::createOpenStack();
+
+        $adapter = new OpenStackSwiftAdapter($openstack, self::$containerName);
+
+        $this->expectException(UnableToGenerateTemporaryUrl::class);
+        $adapter->temporaryUrl('some/file.txt', new \DateTimeImmutable(), new Config());
     }
 }

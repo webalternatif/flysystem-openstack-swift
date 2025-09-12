@@ -16,6 +16,7 @@ use League\Flysystem\UnableToCheckFileExistence;
 use League\Flysystem\UnableToCopyFile;
 use League\Flysystem\UnableToDeleteDirectory;
 use League\Flysystem\UnableToDeleteFile;
+use League\Flysystem\UnableToGenerateTemporaryUrl;
 use League\Flysystem\UnableToMoveFile;
 use League\Flysystem\UnableToReadFile;
 use League\Flysystem\UnableToRetrieveMetadata;
@@ -387,6 +388,10 @@ final class OpenStackSwiftAdapter implements FilesystemAdapter, TemporaryUrlGene
     #[\Override]
     public function temporaryUrl(string $path, \DateTimeInterface $expiresAt, BaseConfig $config): string
     {
+        if (null === $this->tempUrlKey) {
+            throw new UnableToGenerateTemporaryUrl(sprintf('The `$tempUrlKey` argument must be provided to %s\'s constructor in order to generate temporary URLs.', self::class), $path);
+        }
+
         $expires = $expiresAt->getTimestamp();
 
         $queryParams = [
@@ -403,7 +408,7 @@ final class OpenStackSwiftAdapter implements FilesystemAdapter, TemporaryUrlGene
 
         $hmacBody = "GET\n{$expires}\n{$hmacPath}";
         $digest = (string) $config->get(Config::OPTION_DIGEST, 'sha256');
-        $queryParams['temp_url_sig'] = hash_hmac($digest, $hmacBody, $this->tempUrlKey ?? '');
+        $queryParams['temp_url_sig'] = hash_hmac($digest, $hmacBody, $this->tempUrlKey);
 
         /** @var string|null $fileName */
         $fileName = $config->get(Config::OPTION_FILE_NAME);
