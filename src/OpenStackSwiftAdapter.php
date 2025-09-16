@@ -16,23 +16,26 @@ use League\Flysystem\UnableToCheckFileExistence;
 use League\Flysystem\UnableToCopyFile;
 use League\Flysystem\UnableToDeleteDirectory;
 use League\Flysystem\UnableToDeleteFile;
+use League\Flysystem\UnableToGenerateTemporaryUrl;
 use League\Flysystem\UnableToMoveFile;
 use League\Flysystem\UnableToReadFile;
 use League\Flysystem\UnableToRetrieveMetadata;
 use League\Flysystem\UnableToSetVisibility;
 use League\Flysystem\UnableToWriteFile;
+use League\Flysystem\UrlGeneration\TemporaryUrlGenerator;
 use OpenStack\Common\Error\BadResponseError;
 use OpenStack\ObjectStore\v1\Models\Container;
 use OpenStack\ObjectStore\v1\Models\StorageObject;
 use OpenStack\OpenStack;
 
-class OpenStackSwiftAdapter implements FilesystemAdapter
+final class OpenStackSwiftAdapter implements FilesystemAdapter, TemporaryUrlGenerator
 {
     private ?Container $container = null;
 
     public function __construct(
         private OpenStack $openStack,
-        private string $containerName
+        private string $containerName,
+        private ?string $tempUrlKey = null,
     ) {
     }
 
@@ -48,6 +51,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         return $this->container;
     }
 
+    #[\Override]
     public function fileExists(string $path): bool
     {
         try {
@@ -57,6 +61,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
+    #[\Override]
     public function directoryExists(string $path): bool
     {
         try {
@@ -69,6 +74,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
+    #[\Override]
     public function write(string $path, string $contents, BaseConfig $config): void
     {
         $data = [
@@ -83,6 +89,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
+    #[\Override]
     public function writeStream(string $path, $contents, BaseConfig $config): void
     {
         $data = [
@@ -111,6 +118,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
+    #[\Override]
     public function read(string $path): string
     {
         $object = $this->getContainer()->getObject($path);
@@ -128,6 +136,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
+    #[\Override]
     public function readStream(string $path)
     {
         $object = $this->getContainer()->getObject($path);
@@ -149,6 +158,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
+    #[\Override]
     public function delete(string $path): void
     {
         $object = $this->getContainer()->getObject($path);
@@ -164,6 +174,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
+    #[\Override]
     public function deleteDirectory(string $path): void
     {
         // Make sure a slash is added to the end.
@@ -189,21 +200,25 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
+    #[\Override]
     public function createDirectory(string $path, BaseConfig $config): void
     {
         // TODO add option in constructor to enable creating empty files to simulate directories
     }
 
+    #[\Override]
     public function setVisibility(string $path, string $visibility): void
     {
         throw UnableToSetVisibility::atLocation($path, 'OpenStack Swift does not support per-file visibility.');
     }
 
+    #[\Override]
     public function visibility(string $path): FileAttributes
     {
         throw UnableToRetrieveMetadata::visibility($path, 'OpenStack Swift does not support per-file visibility.');
     }
 
+    #[\Override]
     public function mimeType(string $path): FileAttributes
     {
         $object = $this->getContainer()->getObject($path);
@@ -223,6 +238,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         return $fileAttributes;
     }
 
+    #[\Override]
     public function lastModified(string $path): FileAttributes
     {
         $object = $this->getContainer()->getObject($path);
@@ -242,6 +258,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         return $fileAttributes;
     }
 
+    #[\Override]
     public function fileSize(string $path): FileAttributes
     {
         $object = $this->getContainer()->getObject($path);
@@ -261,6 +278,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         return $fileAttributes;
     }
 
+    #[\Override]
     public function listContents(string $path, bool $deep): iterable
     {
         $path = trim($path, '/');
@@ -298,6 +316,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
+    #[\Override]
     public function move(string $source, string $destination, BaseConfig $config): void
     {
         if ($source === $destination) {
@@ -312,6 +331,7 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
         }
     }
 
+    #[\Override]
     public function copy(string $source, string $destination, BaseConfig $config): void
     {
         $object = $this->getContainer()->getObject($source);
@@ -353,6 +373,52 @@ class OpenStackSwiftAdapter implements FilesystemAdapter
             null,
             $lastModified,
             $mimeType
+        );
+    }
+
+    /**
+     * Available options in {@param $config} are:
+     * - {@see Config::OPTION_DIGEST}: the digest algorithm to use for the HMAC cryptographic signature (given as first
+     *   parameter of {@see hash_hmac}), default: sha256.
+     * - {@see Config::OPTION_FILE_NAME}: a string to override the default file name (which is based on the object name).
+     * - {@see Config::OPTION_PREFIX}: if `true`, a prefix-based temporary URL will be generated, default: `false`.
+     *
+     * For more information, see {@see https://docs.openstack.org/swift/latest/api/temporary_url_middleware.html}.
+     */
+    #[\Override]
+    public function temporaryUrl(string $path, \DateTimeInterface $expiresAt, BaseConfig $config): string
+    {
+        if (null === $this->tempUrlKey) {
+            throw new UnableToGenerateTemporaryUrl(sprintf('The `$tempUrlKey` argument must be provided to %s\'s constructor in order to generate temporary URLs.', self::class), $path);
+        }
+
+        $expires = $expiresAt->getTimestamp();
+
+        $queryParams = [
+            'temp_url_expires' => $expires,
+        ];
+
+        $url = $this->getContainer()->getObject($path)->getPublicUri()->__toString();
+        $hmacPath = preg_replace('#(.*)v1#U', '/v1', $url, 1);
+
+        if (true === $config->get(Config::OPTION_PREFIX)) {
+            $hmacPath = "prefix:{$hmacPath}";
+            $queryParams['temp_url_prefix'] = $path;
+        }
+
+        $hmacBody = "GET\n{$expires}\n{$hmacPath}";
+        $digest = (string) $config->get(Config::OPTION_DIGEST, 'sha256');
+        $queryParams['temp_url_sig'] = hash_hmac($digest, $hmacBody, $this->tempUrlKey);
+
+        /** @var string|null $fileName */
+        $fileName = $config->get(Config::OPTION_FILE_NAME);
+        if (is_string($fileName)) {
+            $queryParams['filename'] = $fileName;
+        }
+
+        return sprintf(
+            "{$url}?%s",
+            join('&', array_map(fn ($k, $v) => "{$k}={$v}", array_keys($queryParams), $queryParams))
         );
     }
 }
