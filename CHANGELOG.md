@@ -1,33 +1,33 @@
-## v0.5.0 (unreleased)
+## v0.5.0 (September 16, 2025)
 
 ### 💥 Breaking changes
 
-* Make classes final
+* Make classes final ([#9](https://github.com/webalternatif/flysystem-openstack-swift/pull/9))
 
 ### ✨ New features
 
-* Add support for temporary URLs
+* Add support for temporary URLs ([#9](https://github.com/webalternatif/flysystem-openstack-swift/pull/9))
 
 ## v0.4.0 (February 8, 2025)
 
 ### 💥 Breaking changes
 
-* Drop support for PHP 8.0 ([#7](https://github.com/webalternatif/flysystem-dsn/pull/7))
+* Drop support for PHP 8.0 ([#7](https://github.com/webalternatif/flysystem-openstack-swift/pull/7))
 
 ### ✨ New features
 
-* Add support for PHP 8.4 ([#7](https://github.com/webalternatif/flysystem-dsn/pull/7))
+* Add support for PHP 8.4 ([#7](https://github.com/webalternatif/flysystem-openstack-swift/pull/7))
 
 ### 🐛 Bug fixes
 
-* Fix `OpenStackSwiftAdapter::move` deleting the file if source and destination are the same (detected by https://github.com/thephpleague/flysystem-adapter-test-utilities/commit/83b40c1a8a8a40be435a9683a7554396134ab1c4) ([#7](https://github.com/webalternatif/flysystem-dsn/pull/7))
-* Fix `OpenStackSwiftAdapter::directoryExists` returning `true` for files (detected by https://github.com/thephpleague/flysystem-adapter-test-utilities/commit/ab92311b06ca0bdb5a16e93dc29be7774c1c6f2a) ([#7](https://github.com/webalternatif/flysystem-dsn/pull/7))
+* Fix `OpenStackSwiftAdapter::move` deleting the file if source and destination are the same (detected by https://github.com/thephpleague/flysystem-adapter-test-utilities/commit/83b40c1a8a8a40be435a9683a7554396134ab1c4) ([#7](https://github.com/webalternatif/flysystem-openstack-swift/pull/7))
+* Fix `OpenStackSwiftAdapter::directoryExists` returning `true` for files (detected by https://github.com/thephpleague/flysystem-adapter-test-utilities/commit/ab92311b06ca0bdb5a16e93dc29be7774c1c6f2a) ([#7](https://github.com/webalternatif/flysystem-openstack-swift/pull/7))
 
 ## v0.3.2 (May 6, 2024)
 
 ### ✨ New features
 
-* Add support for PHP 8.3 ([#6](https://github.com/webalternatif/flysystem-dsn/pull/6))
+* Add support for PHP 8.3 ([#6](https://github.com/webalternatif/flysystem-openstack-swift/pull/6))
 
 ## v0.3.1 (December 15, 2022)
 
