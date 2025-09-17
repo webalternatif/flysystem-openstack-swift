@@ -1,6 +1,6 @@
 {
     "name": "webalternatif/flysystem-openstack-swift",
-    "description": "Flysystem v2 adapter for OpenStack Swift",
+    "description": "Flysystem v3 adapter for OpenStack Swift",
     "type": "library",
     "keywords": ["flysystem", "adapter", "openstack", "swift", "filesystem", "storage"],
     "license": "MIT",
