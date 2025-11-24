@@ -1,3 +1,9 @@
+## v0.5.1 (unreleased)
+
+### 🐛 Bug fixes
+
+* Fix `OpenStackSwiftAdapter::listContents` returning unfiltered results when the directory is named "0"
+
 ## v0.5.0 (September 16, 2025)
 
 ### 💥 Breaking changes
