@@ -282,7 +282,7 @@ final class OpenStackSwiftAdapter implements FilesystemAdapter, TemporaryUrlGene
     public function listContents(string $path, bool $deep): iterable
     {
         $path = trim($path, '/');
-        $prefix = empty($path) ? '' : $path.'/';
+        $prefix = '' === $path ? '' : $path.'/';
         /** @var iterable<StorageObject> $objects */
         $objects = $this->getContainer()->listObjects(['prefix' => $prefix]);
 
