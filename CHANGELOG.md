@@ -1,8 +1,16 @@
-## v0.5.1 (unreleased)
+## v0.6.0 (unreleased)
+
+### 💥 Breaking changes
+
+* Drop support for PHP 8.1 ([#13](https://github.com/webalternatif/flysystem-openstack-swift/pull/13))
+
+### ✨ New features
+
+* Add support for PHP 8.5 ([#11](https://github.com/webalternatif/flysystem-openstack-swift/pull/11))
 
 ### 🐛 Bug fixes
 
-* Fix `OpenStackSwiftAdapter::listContents` returning unfiltered results when the directory is named "0"
+* Fix `OpenStackSwiftAdapter::listContents` returning unfiltered results when the directory is named "0" ([#10](https://github.com/webalternatif/flysystem-openstack-swift/pull/10))
 
 ## v0.5.0 (September 16, 2025)
 
